@@ -6,6 +6,12 @@ module.exports = {
     "./node_modules/prettier-stylelint/config.js"
   ],
   rules: {
+    "scss/at-rule-no-unknown": [
+      true,
+      {
+        ignoreAtRules: ["/^top(-)?/", "/^bottom(-)?/", "page", "footnotes"]
+      }
+    ],
     "media-feature-name-no-unknown": [
       true,
       {
