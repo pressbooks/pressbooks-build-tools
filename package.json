@@ -1,8 +1,7 @@
 {
   "name": "pressbooks-build-tools",
-  "version": "0.8.0",
-  "description":
-    "NPM package which includes all asset linting and build tools for Pressbooks projects.",
+  "version": "0.9.0",
+  "description": "NPM package which includes all asset linting and build tools for Pressbooks projects.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
