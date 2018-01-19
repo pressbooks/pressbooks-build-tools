@@ -2565,9 +2565,9 @@ escope@^3.6.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-config-humanmade@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-humanmade/-/eslint-config-humanmade-0.2.0.tgz#6a9ed626e2a86360fd16840c709d5eac894e8316"
+eslint-config-humanmade@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-humanmade/-/eslint-config-humanmade-0.3.0.tgz#c24f0914293850e9b9d676f6c584dfc3385d01ad"
   dependencies:
     js-yaml "^3.7.0"
 
