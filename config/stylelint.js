@@ -8,12 +8,12 @@ module.exports = {
   rules: {
     "scss/at-rule-no-unknown": [
       true,
-			{
-				ignoreAtRules: [
-					"/(top|right|left|bottom|page)(:|-)*(w)*(-)*(w)*/",
-					"footnotes"
-				]
-			}
+      {
+        ignoreAtRules: [
+          "/(top|right|left|bottom|page)(:|-)*(w)*(-)*(w)*/",
+          "footnotes"
+        ]
+      }
     ],
     "media-feature-name-no-unknown": [
       true,
