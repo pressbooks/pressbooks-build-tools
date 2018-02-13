@@ -38,6 +38,6 @@
     "stylelint-config-recommended-scss": "^3.0.0",
     "stylelint-scss": "^2.3.0",
     "stylelint-webpack-plugin": "^0.10.1",
-    "wp-pot-cli": "^1.0.1"
+    "wp-pot-cli": "^1.1.0"
   }
 }
