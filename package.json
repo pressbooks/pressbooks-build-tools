@@ -41,7 +41,7 @@
     "prettier": "^1.10.2",
     "prettier-stylelint": "^0.4.2",
     "rimraf": "~2.6",
-    "stylelint": "^8.4.0",
+    "stylelint": "^9.0.0",
     "stylelint-config-recommended-scss": "^3.0.0",
     "stylelint-scss": "^2.3.0",
     "stylelint-webpack-plugin": "^0.10.2",
