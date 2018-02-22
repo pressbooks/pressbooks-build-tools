@@ -5796,7 +5796,7 @@ methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
 
-micromatch@2.3.11, micromatch@^2.1.5, micromatch@^2.3.0, micromatch@^2.3.11, micromatch@^2.3.7:
+micromatch@2.3.11, micromatch@^2.1.5, micromatch@^2.3.11, micromatch@^2.3.7:
   version "2.3.11"
   resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-2.3.11.tgz#86677c97d1720b363431d04d0d15293bd38c1565"
   dependencies:
@@ -8613,11 +8613,11 @@ stylelint-scss@^2.3.0:
     postcss-value-parser "^3.3.0"
 
 stylelint-webpack-plugin@^0.10.2:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/stylelint-webpack-plugin/-/stylelint-webpack-plugin-0.10.2.tgz#e9dfd845ec0813a51b8d8d3abc983f0d556ce42d"
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/stylelint-webpack-plugin/-/stylelint-webpack-plugin-0.10.3.tgz#1b80048df3b38a8559207e12b12c6e987b28f317"
   dependencies:
     arrify "^1.0.1"
-    micromatch "^2.3.0"
+    micromatch "^3.1.8"
     object-assign "^4.1.0"
     ramda "^0.25.0"
 
