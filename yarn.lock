@@ -1251,8 +1251,8 @@ browser-sync-ui@v1.0.1:
     stream-throttle "^0.1.3"
 
 browser-sync-webpack-plugin@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/browser-sync-webpack-plugin/-/browser-sync-webpack-plugin-2.0.1.tgz#267cbd73b16c7ba5d92a0ebab17e62b13002ab7b"
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/browser-sync-webpack-plugin/-/browser-sync-webpack-plugin-2.2.1.tgz#34170b29ca8954c3fbc39fd6cd58a7b2d249e17b"
   dependencies:
     lodash "^4"
 
