@@ -8835,8 +8835,8 @@ stylelint-config-recommended@^2.0.0:
   resolved "https://registry.yarnpkg.com/stylelint-config-recommended/-/stylelint-config-recommended-2.0.0.tgz#560a028e81ea3ca8894b9a8eef4c0e05ac60e090"
 
 stylelint-scss@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/stylelint-scss/-/stylelint-scss-3.0.0.tgz#15beb887117ccef20668a3f4728eb5be5fbda045"
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/stylelint-scss/-/stylelint-scss-3.0.1.tgz#bc062e818add985f19dee98f7f5b4bff4f38706e"
   dependencies:
     lodash "^4.17.4"
     postcss-media-query-parser "^0.2.3"
