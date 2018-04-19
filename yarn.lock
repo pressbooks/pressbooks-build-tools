@@ -3057,8 +3057,8 @@ escope@^3.6.0:
     estraverse "^4.1.1"
 
 eslint-config-humanmade@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-humanmade/-/eslint-config-humanmade-0.4.0.tgz#51de13cd446d2c6f398fa4f343603f4bb7b7746d"
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-humanmade/-/eslint-config-humanmade-0.4.1.tgz#9fe61fa9d4ff20d309713dd48a23c5971cd3f7b9"
 
 eslint-config-react-app@^2.1.0:
   version "2.1.0"
