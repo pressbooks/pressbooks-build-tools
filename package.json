@@ -16,7 +16,7 @@
     "url": "git+https://github.com/pressbooks/pressbooks-build-tools.git"
   },
   "author": "Pressbooks <code@pressbooks.com> (Book Oven Inc.)",
-  "license": "gpl-3.0-or-later",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/pressbooks/pressbooks-build-tools/issues"
   },
