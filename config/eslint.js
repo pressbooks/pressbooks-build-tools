@@ -8,6 +8,11 @@ module.exports = {
 	plugins: [
 		'jquery',
 	],
+	settings: {
+		react: {
+			version: '999.999.999',
+		},
+	},
 	rules: {
 		'jsx-a11y/href-no-hash': 0,
 		'jquery/no-ajax': 2,
