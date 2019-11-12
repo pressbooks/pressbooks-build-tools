@@ -55,6 +55,7 @@ mix
 	.options( { processCssUrls: false } )
 	.setPublicPath( path.join( 'assets', 'dist' ) )
 	.js( 'assets/src/scripts/test.js', 'assets/dist/scripts/' )
+	.scripts( 'assets/src/scripts/test.js', 'assets/dist/scripts/test2.js' )
 	.sass( 'assets/src/styles/test.scss', 'assets/dist/styles/' )
 	.then( () => {
 		normalizeNewlines( `${dist}/scripts/` );
@@ -62,7 +63,8 @@ mix
 	} );
 
 // Full API
-// mix.js(src, output);
+// mix.js(src, output); <-- compile (ES2015 syntax, modules, ...) !and! minify
+// mix.scripts(src, output); <-- just minify
 // mix.react(src, output); <-- Identical to mix.js(), but registers React Babel compilation.
 // mix.preact(src, output); <-- Identical to mix.js(), but registers Preact compilation.
 // mix.coffee(src, output); <-- Identical to mix.js(), but registers CoffeeScript compilation.
