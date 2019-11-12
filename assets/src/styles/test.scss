@@ -1,0 +1,16 @@
+body {
+  table.foo {
+    tr {
+      border: 1px solid red;
+    }
+
+    th,
+    td {
+      border: 1px dashed green;
+    }
+
+    th {
+      font-weight: bold;
+    }
+  }
+}

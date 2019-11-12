@@ -2,26 +2,34 @@
   "name": "pressbooks-build-tools",
   "version": "1.5.0",
   "description": "NPM package which includes all asset linting and build tools for Pressbooks projects.",
-  "main": "index.js",
-  "scripts": {
-    "fix": "npm run -s fix:scripts",
-    "fix:scripts": "cross-env NODE_ENV=development node_modules/eslint/bin/eslint.js --fix \"config/*.js\"",
-    "lint": "npm run -s lint:scripts",
-    "lint:scripts": "cross-env NODE_ENV=development node_modules/eslint/bin/eslint.js \"config/*.js\"",
-    "test": "npm run -s lint"
+  "homepage": "https://github.com/pressbooks/pressbooks-build-tools#readme",
+  "bugs": {
+    "url": "https://github.com/pressbooks/pressbooks-build-tools/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pressbooks/pressbooks-build-tools.git"
   },
-  "author": "Pressbooks <code@pressbooks.com> (Book Oven Inc.)",
   "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/pressbooks/pressbooks-build-tools/issues"
+  "author": "Pressbooks <code@pressbooks.com> (Book Oven Inc.)",
+  "main": "index.js",
+  "scripts": {
+    "build:production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "fix": "cross-env NODE_ENV=development node_modules/eslint/bin/eslint.js --fix \"config/*.js\"",
+    "lint:scripts": "cross-env NODE_ENV=development node_modules/eslint/bin/eslint.js \"config/*.js\"",
+    "lint:styles": "cross-env NODE_ENV=development node_modules/stylelint/bin/stylelint.js \"assets/src/styles/**/*.scss\" --syntax scss",
+    "test": "npm run -s lint:scripts && npm run -s lint:styles && npm run -s build:production"
   },
-  "homepage": "https://github.com/pressbooks/pressbooks-build-tools#readme",
+  "eslintConfig": {
+    "extends": "./config/eslint.js"
+  },
+  "stylelint": {
+    "extends": "./config/stylelint.js"
+  },
   "dependencies": {
     "babel-eslint": "^10.0.0",
+    "browser-sync": "^2.26.7",
+    "browser-sync-webpack-plugin": "^2.0.1",
     "cross-env": "^6.0.3",
     "eslint": "^5.10.0",
     "eslint-config-humanmade": "^0.7.0",
@@ -30,9 +38,14 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "laravel-mix": "^5.0.0"
-  },
-  "eslintConfig": {
-    "extends": "./config/eslint.js"
+    "laravel-mix": "^5.0.0",
+    "normalize-newline": "^3.0.0",
+    "prettier-stylelint": "^0.4.2",
+    "sass": "^1.23.3",
+    "sass-loader": "^8.0.0",
+    "stylelint": "^11.1.1",
+    "stylelint-config-recommended-scss": "^4.0.0",
+    "stylelint-scss": "^3.12.1",
+    "vue-template-compiler": "^2.6.10"
   }
 }
