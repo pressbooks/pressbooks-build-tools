@@ -19,7 +19,7 @@ module.exports = {
 			{ ignoreMediaFeatureNames: [ 'min--moz-device-pixel-ratio' ] },
 		],
 		'media-query-list-comma-space-after': 'always-single-line',
-		'property-no-unknown':                [
+		'property-no-unknown': [
 			true,
 			{
 				ignoreProperties: [
