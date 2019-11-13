@@ -11,7 +11,7 @@ NPM package which includes all asset linting and build tools for Pressbooks proj
 
 ## Why No Save?
 
-When installing  `pressbooks-build-tools` you install 955+ directories under `node_modules`. These modules are used to compile and copy files to `assets/dist`. These  
+When installing  `pressbooks-build-tools` you install 955+ directories under `node_modules`. These modules are used to compile and copy files to `assets/dist`. These 
 `node_modules` are never used in our code, never deployed.
 
 When maintaining dozens & dozens of plugins & themes, 1 dependabot nag about some  module in `pressbooks-build-tools` equals updating many, many GitHub repos to fix code we never 
