@@ -1,6 +1,6 @@
 
 module.exports = {
-	extends: 'humanmade',
+	extends: '@humanmade/eslint-config',
 	globals: {
 		jQuery: true,
 		wp: true,
