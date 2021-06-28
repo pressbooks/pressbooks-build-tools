@@ -19,7 +19,7 @@
     "lint": "run-s lint:*",
     "lint:scripts": "eslint config/*.js assets/src/scripts/*.js",
     "lint:styles": "stylelint **/*.scss",
-    "test": "run -s lint:* build"
+    "test": "run-s lint:* build"
   },
   "eslintConfig": {
     "extends": "./config/eslint.js"
