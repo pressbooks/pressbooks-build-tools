@@ -1,10 +1,9 @@
 // Boilerplate webpack.mix.js configuration for Pressbooks plugins & themes
 // Used to test that, at the very least, .js and .scss files compile
 
-let mix = require( 'laravel-mix' );
 let path = require( 'path' );
-let normalizeNewline = require( 'normalize-newline' );
-let fs = require( 'fs' );
+
+let mix = require( 'laravel-mix' );
 
 /*
  |--------------------------------------------------------------------------
@@ -34,33 +33,13 @@ mix.browserSync( {
 	],
 } );
 
-// Normalize Newlines
-const normalizeNewlines = dir => {
-	fs.readdirSync( dir ).forEach( function ( file ) {
-		file = path.join( dir, file );
-		fs.readFile( file, 'utf8', function ( err, buffer ) {
-			// eslint-disable-next-line no-console
-			if ( err ) return console.log( err );
-			buffer = normalizeNewline( buffer );
-			fs.writeFile( file, buffer, 'utf8', function ( err ) {
-				// eslint-disable-next-line no-console
-				if ( err ) return console.log( err );
-			} );
-		} );
-	} );
-};
-
 mix
 	.version()
 	.options( { processCssUrls: false } )
 	.setPublicPath( path.join( 'assets', 'dist' ) )
 	.js( 'assets/src/scripts/test.js', 'assets/dist/scripts/' )
 	.scripts( 'assets/src/scripts/test.js', 'assets/dist/scripts/test2.js' )
-	.sass( 'assets/src/styles/test.scss', 'assets/dist/styles/' )
-	.then( () => {
-		normalizeNewlines( `${dist}/scripts/` );
-		normalizeNewlines( `${dist}/styles/` );
-	} );
+	.sass( 'assets/src/styles/test.scss', 'assets/dist/styles/' );
 
 // Full API
 // mix.js(src, output); <-- compile (ES2015 syntax, modules, ...) !and! minify
