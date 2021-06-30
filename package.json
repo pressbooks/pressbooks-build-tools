@@ -1,6 +1,6 @@
 {
   "name": "pressbooks-build-tools",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "NPM package which includes all asset linting and build tools for Pressbooks projects.",
   "homepage": "https://github.com/pressbooks/pressbooks-build-tools#readme",
   "bugs": {
