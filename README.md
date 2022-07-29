@@ -6,16 +6,38 @@ NPM package which includes all asset linting and build tools for Pressbooks proj
 
 ## How To install
 
-    cd ~/code/pressbooks-dev/site/web/app/plugins/pressbooks
-    npm install --no-save pressbooks-build-tools
+```bash
+npm i -D pressbooks-build-tools
+```
 
-## Why No Save?
+## Usage
 
-When installing  `pressbooks-build-tools` you install 955+ directories under `node_modules`. These modules are used to compile and copy files to `assets/dist`. These 
-`node_modules` are never used in our code, never deployed.
+### Laravel Mix
 
-When maintaining dozens & dozens of plugins & themes, 1 dependabot nag about some module in `pressbooks-build-tools` equals updating many, many GitHub repos to fix code we never 
-deploy. It's not fun. For this reason we don't include `pressbooks-build-tools` in our plugins or themes `package.json` file.
+Pressbooks Build Tools includes [Laravel Mix](https://laravel-mix.com/), which can be configured and used according to the
+project's [documentation](https://laravel-mix.com/docs/6.0/installation#step-2-create-a-mix-configuration-file).
+
+### ESLint
+
+Pressbooks Build Tools includes [ESLint](https://eslint.org). Pressbooks' ESLint configuration can be used in your
+project by adding the following to your ESLint configuration:
+
+```javascript
+"eslintConfig": {
+    "extends": "./node_modules/pressbooks-build-tools/config/eslint.js"
+}
+```
+
+### Stylelint
+
+Pressbooks Build Tools includes [Stylelint](http://stylelint.io). Pressbooks' Stylelint configuration can be used in your
+project by adding the following to your `package.json` file:
+
+```javascript
+"stylelint": {
+    "extends": "./node_modules/pressbooks-build-tools/config/stylelint.js"
+}
+```
 
 ## Upgrading to 3.0
 
