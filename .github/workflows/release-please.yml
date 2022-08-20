@@ -12,3 +12,4 @@ jobs:
         with:
           release-type: node
           package-name: pressbooks-build-tools
+          include-v-in-tag: false
