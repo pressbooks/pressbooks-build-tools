@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - master # TODO: Remove this
 name: release-please
 jobs:
   release-please:
