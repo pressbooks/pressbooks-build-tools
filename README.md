@@ -61,7 +61,7 @@ This repo includes a boilerplate `webpack.mix.js` configuration used to test tha
 
 ```
 npm install
-npm run test
+npm test
 ```
 
 Expected: No errors. Everything is fine.
