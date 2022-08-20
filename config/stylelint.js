@@ -1,9 +1,10 @@
 module.exports = {
 	extends: [
-		'stylelint-config-recommended-scss',
-		'./node_modules/prettier-stylelint/config.js',
+		'stylelint-config-standard-scss',
+		'stylelint-config-prettier',
 	],
 	rules: {
+		'scss/comment-no-empty': null,
 		'scss/at-rule-no-unknown': [
 			true,
 			{
@@ -35,9 +36,11 @@ module.exports = {
 				],
 			},
 		],
+		'selector-class-pattern': null,
 		'selector-pseudo-element-no-unknown': [
 			true,
 			{ ignorePseudoElements: [ 'footnote-call' ] },
 		],
+		'no-descending-specificity': null,
 	},
 };

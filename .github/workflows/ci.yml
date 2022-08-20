@@ -4,32 +4,29 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '14', '15', '16' ]
+
     steps:
       - uses: actions/checkout@v3
-
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
+          node-version: ${{ matrix.node }}
+      - name: Cache Node modules
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+      - if: ${{ steps.cache.outputs.cache-hit == 'false' }}
         name: List the state of node modules
         continue-on-error: true
         run: npm list
-
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Build & Test
-        run: npm run test
+        run: npm install
         env:
-          CI: true
+          ci: true
+      - name: Build & Test
+        run: npm test

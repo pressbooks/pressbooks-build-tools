@@ -12,4 +12,5 @@ jQuery( function ( $ ) {
 
 	fibonacci( 4 );
 
+	$( 'body' ).removeClass( 'no-js' );
 } );
