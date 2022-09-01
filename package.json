@@ -25,6 +25,9 @@
     "test": "run-s lint:* build",
     "prepare": "husky install"
   },
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
+  },
   "eslintConfig": {
     "extends": "./config/eslint.js"
   },
