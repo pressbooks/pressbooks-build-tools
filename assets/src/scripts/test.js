@@ -1,3 +1,6 @@
+// Import styles
+import '../styles/test.scss';
+
 jQuery( function ( $ ) {
 	/**
 	 *
