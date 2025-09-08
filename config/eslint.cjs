@@ -15,7 +15,7 @@ module.exports = {
 		wp: true,
 	},
 	parserOptions: {
-		ecmaVersion: 2018,
+		ecmaVersion: 2022,
 		sourceType: 'module',
 	},
 	rules: {
@@ -42,6 +42,8 @@ module.exports = {
 		eqeqeq: [ 'error' ],
 		'func-call-spacing': [ 'error' ],
 		'import/no-unresolved': [ 'off' ],
+		'import/namespace': [ 'off' ],
+		'import/default': [ 'off' ],
 		'import/order': [ 'error', {
 			alphabetize: {
 				order: 'asc',

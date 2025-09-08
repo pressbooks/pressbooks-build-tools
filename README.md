@@ -4,7 +4,7 @@
 
 NPM package which includes all asset linting and build tools for Pressbooks projects.
 
-## How To install
+## Installation
 
 ```bash
 npm i -D pressbooks-build-tools
@@ -12,19 +12,141 @@ npm i -D pressbooks-build-tools
 
 ## Usage
 
-### Laravel Mix
+### Vite Build System
 
-Pressbooks Build Tools includes [Laravel Mix](https://laravel-mix.com/), which can be configured and used according to the
-project's [documentation](https://laravel-mix.com/docs/6.0/installation#step-2-create-a-mix-configuration-file).
+Pressbooks Build Tools now uses [Vite](https://vitejs.dev/) for fast, modern asset building. To use it in your project:
+
+#### 1. Create a `vite.config.js` in your project root:
+
+```javascript
+import { createViteConfig } from 'pressbooks-build-tools'
+import { resolve } from 'path'
+
+export default createViteConfig({
+  input: {
+    'my-plugin': resolve(__dirname, 'assets/src/scripts/main.js'),
+    'my-plugin-styles': resolve(__dirname, 'assets/src/styles/main.scss')
+  },
+  // Optional customizations
+  outDir: 'assets/dist',
+  port: 3200,
+  proxy: {
+    '/wp-admin': {
+      target: 'https://my-site.test',
+      changeOrigin: true,
+      secure: false
+    }
+  }
+})
+```
+
+#### 2. Add scripts to your `package.json`:
+
+```json
+{
+  "scripts": {
+    "build": "pressbooks-build-tools build",
+    "dev": "pressbooks-build-tools dev",
+    "watch": "pressbooks-build-tools dev",
+    "preview": "pressbooks-build-tools preview",
+    "lint": "pressbooks-build-tools lint",
+    "lint:scripts": "pressbooks-build-tools lint:scripts",
+    "lint:styles": "pressbooks-build-tools lint:styles",
+    "fix": "pressbooks-build-tools fix",
+    "test": "pressbooks-build-tools test"
+  }
+}
+```
+
+#### 3. Use npm scripts or CLI commands directly:
+
+```bash
+# Development with hot reload
+npm run dev
+# or directly: pressbooks-build-tools dev
+
+# Build for production  
+npm run build
+# or directly: pressbooks-build-tools build
+
+# Lint code
+npm run lint
+# or directly: pressbooks-build-tools lint
+
+# Auto-fix linting issues
+npm run fix
+# or directly: pressbooks-build-tools fix
+
+# Run tests (lint + build)
+npm run test
+# or directly: pressbooks-build-tools test
+```
+
+#### Configuration Options
+
+The `createViteConfig` function accepts these options:
+
+- `input` - Entry points for your assets (required)
+- `outDir` - Output directory (default: `'assets/dist'`)
+- `port` - Development server port (default: `3100`)
+- `host` - Development server host (default: `'localhost'`)
+- `proxy` - Development server proxy configuration
+- `copyTargets` - Array of files/directories to copy during build (see below)
+- `plugins` - Additional Vite plugins to include
+- `config` - Additional Vite configuration to merge
+
+#### File Copying with copyTargets
+
+For copying static files (equivalent to Laravel Mix's `.copy()` and `.copyDirectory()`):
+
+```javascript
+export default createViteConfig({
+  // ... other options ...
+  copyTargets: [
+    // Copy individual files
+    { 
+      src: 'node_modules/some-lib/dist/file.js', 
+      dest: 'scripts', 
+      rename: 'new-name.js' 
+    },
+    // Copy directories
+    { 
+      src: 'assets/src/images/*', 
+      dest: 'images' 
+    },
+    // Copy with glob patterns
+    { 
+      src: 'node_modules/@vendor/package/dist/**/*', 
+      dest: 'vendor/package' 
+    }
+  ]
+})
+```
+
+#### Migrating .scripts() Concatenation
+
+Laravel Mix's `.scripts()` method concatenated multiple files. In Vite, create wrapper files instead:
+
+```javascript
+// assets/src/scripts/vendor/jquery-plugins.js
+import 'jquery-ui/dist/jquery-ui.min.js';
+import 'jquery-validation/dist/jquery.validate.min.js';
+import 'select2/dist/js/select2.min.js';
+
+// Then add to your vite.config.js:
+input: {
+  'jquery-plugins': resolve(__dirname, 'assets/src/scripts/vendor/jquery-plugins.js')
+}
+```
 
 ### ESLint
 
 Pressbooks Build Tools includes [ESLint](https://eslint.org). Pressbooks' ESLint configuration can be used in your
 project by adding the following to your ESLint configuration:
 
-```javascript
+```json
 "eslintConfig": {
-    "extends": "./node_modules/pressbooks-build-tools/config/eslint.js"
+    "extends": "./node_modules/pressbooks-build-tools/config/eslint.cjs"
 }
 ```
 
@@ -33,31 +155,41 @@ project by adding the following to your ESLint configuration:
 Pressbooks Build Tools includes [Stylelint](http://stylelint.io). Pressbooks' Stylelint configuration can be used in your
 project by adding the following to your `package.json` file:
 
-```javascript
+```json
 "stylelint": {
     "extends": "./node_modules/pressbooks-build-tools/config/stylelint.js"
 }
 ```
 
-## Upgrading to 3.0
+## Migration from Laravel Mix
 
-Version 3.0 of `pressbooks-build-tools` includes Laravel Mix 6.0, and as such will require some [changes to build scripts](https://laravel-mix.com/docs/6.0/upgrade#update-your-npm-scripts) wherever it is used. For example, the build task used in testing this package used to require the following script:
+If you're upgrading from a previous version that used Laravel Mix:
 
-```shell
-cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js
+1. **Remove old files**: Delete `webpack.mix.js` from your project
+2. **Update package.json**: Replace Mix scripts with Vite scripts (see above)
+3. **Create vite.config.js**: Use the new configuration format
+4. **Update asset paths**: Vite uses different output paths than Mix
+
+### Asset Structure
+
+Your project should have this structure:
+
+```
+your-plugin/
+├── assets/
+│   ├── src/
+│   │   ├── scripts/
+│   │   │   └── main.js
+│   │   └── styles/
+│   │       └── main.scss
+│   └── dist/           # Generated by build
+├── vite.config.js      # New config file
+└── package.json        # Updated scripts
 ```
 
-The same build task can now be run using a new `mix` executable with an appropriate flag:
+## Development
 
-```shell
-mix --production
-```
-
-For the full list of scripts and their replacements, see the [Laravel Mix documentation](https://laravel-mix.com/docs/6.0/upgrade#update-your-npm-scripts).
-
-## Test Your Changes
-
-This repo includes a boilerplate `webpack.mix.js` configuration used to test that, at the very least, `.js` and `.scss` files compile and that linters run. To run the test do:
+This repo includes test assets to verify that `.js` and `.scss` files compile and linters run. To test your changes:
 
 ```
 npm install
