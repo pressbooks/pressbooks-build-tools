@@ -54,33 +54,33 @@
     "node": ">= 22"
   },
   "dependencies": {
+    "@kucrut/vite-for-wp": "^0.11.4",
+    "@vitejs/plugin-legacy": "^7.2.1",
     "autoprefixer": "^10.4.20",
     "babel-eslint": "^10.1.0",
     "cross-env": "^7.0.3",
+    "eslint": "^8.57.1",
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsdoc": "^46.4.3",
     "eslint-plugin-sort-destructure-keys": "^1.4.0",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.3.5",
     "prettier-stylelint": "^0.4.2",
+    "sass": "^1.92.1",
     "stylelint": "^14.10.0",
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-recommended": "^9.0.0",
-    "stylelint-config-standard-scss": "^6.0.0"
+    "stylelint-config-standard-scss": "^6.0.0",
+    "vite": "^7.1.5",
+    "vite-plugin-live-reload": "^3.0.5",
+    "vite-plugin-static-copy": "^3.1.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
-    "@kucrut/vite-for-wp": "^0.12.0",
-    "@vitejs/plugin-legacy": "^7.2.1",
-    "eslint": "^8.57.1",
     "husky": "^8.0.1",
-    "lint-staged": "^14.0.1",
-    "npm-run-all": "^4.1.5",
-    "sass": "^1.92.1",
-    "vite": "^7.1.5",
-    "vite-plugin-live-reload": "^3.0.5",
-    "vite-plugin-static-copy": "^3.1.4"
+    "lint-staged": "^14.0.1"
   },
   "lint-staged": {
     "*.js": "eslint --fix",
