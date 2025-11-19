@@ -80,7 +80,26 @@ async function main() {
 			return;
 		case 'fix':
 			execCommand = findExecutable( 'eslint' );
-			execArgs = execCommand === 'npx' ? [ 'eslint', '--fix', '**/*.js', ...args ] : [ '--fix', '**/*.js', ...args ];
+			
+			// Parse file patterns from args, default to common JS patterns if none provided
+			const fixPatterns = [];
+			const eslintOptions = [];
+			
+			for ( const arg of args ) {
+				if ( arg.includes( '*.js' ) || arg.includes( '*.ts' ) || arg.includes( '*.jsx' ) || arg.includes( '*.tsx' ) ) {
+					fixPatterns.push( arg );
+				} else {
+					eslintOptions.push( arg );
+				}
+			}
+			
+			// Default patterns if no JS patterns specified
+			const defaultFixPatterns = [ 'assets/src/scripts/**/*.js', 'config/*.js' ];
+			const finalFixPatterns = fixPatterns.length > 0 ? fixPatterns : defaultFixPatterns;
+			
+			execArgs = execCommand === 'npx' 
+				? [ 'eslint', '--fix', ...finalFixPatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...eslintOptions ] 
+				: [ '--fix', ...finalFixPatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...eslintOptions ];
 			break;
 		case 'test':
 			// For test, run lint then build

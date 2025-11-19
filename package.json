@@ -32,10 +32,10 @@
     "build": "vite build",
     "dev": "vite",
     "preview": "vite preview",
-    "fix": "eslint --fix **/*.js --ignore-pattern bin/",
+    "fix": "eslint --fix config/ assets/src/scripts/ index.js",
     "lint": "run-s lint:*",
-    "lint:scripts": "eslint config/*.js assets/src/scripts/*.js --ignore-pattern bin/",
-    "lint:styles": "stylelint **/*.scss",
+    "lint:scripts": "eslint config/ assets/src/scripts/ index.js",
+    "lint:styles": "stylelint assets/src/styles/",
     "test": "run-s lint:* build",
     "prepare": "husky install"
   },
