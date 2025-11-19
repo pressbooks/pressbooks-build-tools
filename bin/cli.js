@@ -129,19 +129,44 @@ async function main() {
 	 */
 	async function runLintTasks( args, exitOnComplete = true ) {
 		try {
-		// Lint scripts
+			// Parse arguments to separate script/style patterns from other options
+			const scriptPatterns = [];
+			const stylePatterns = [];
+			const otherArgs = [];
+
+			for ( let i = 0; i < args.length; i++ ) {
+				const arg = args[ i ];
+				if ( arg === '--scripts' && args[ i + 1 ] ) {
+					scriptPatterns.push( args[ i + 1 ] );
+					i++; // Skip next argument as it's the pattern
+				} else if ( arg === '--styles' && args[ i + 1 ] ) {
+					stylePatterns.push( args[ i + 1 ] );
+					i++; // Skip next argument as it's the pattern
+				} else {
+					otherArgs.push( arg );
+				}
+			}
+
+			// Default patterns if none provided
+			const defaultScriptPatterns = [ 'config/*.js', 'assets/src/scripts/**/*.js' ];
+			const defaultStylePatterns = [ '**/*.scss' ];
+
+			const finalScriptPatterns = scriptPatterns.length > 0 ? scriptPatterns : defaultScriptPatterns;
+			const finalStylePatterns = stylePatterns.length > 0 ? stylePatterns : defaultStylePatterns;
+
+			// Lint scripts
 			const eslintCmd = findExecutable( 'eslint' );
 			const eslintArgs = eslintCmd === 'npx'
-				? [ 'eslint', 'config/*.js', 'assets/src/scripts/*.js', '--ignore-pattern', 'bin/', ...args ]
-				: [ 'config/*.js', 'assets/src/scripts/*.js', '--ignore-pattern', 'bin/', ...args ];
+				? [ 'eslint', ...finalScriptPatterns, '--ignore-pattern', 'bin/', ...otherArgs ]
+				: [ ...finalScriptPatterns, '--ignore-pattern', 'bin/', ...otherArgs ];
 
 			await runCommand( eslintCmd, eslintArgs, 'ESLint (scripts)' );
 
 			// Lint styles
 			const stylelintCmd = findExecutable( 'stylelint' );
 			const stylelintArgs = stylelintCmd === 'npx'
-				? [ 'stylelint', '**/*.scss', ...args ]
-				: [ '**/*.scss', ...args ];
+				? [ 'stylelint', ...finalStylePatterns, ...otherArgs ]
+				: [ ...finalStylePatterns, ...otherArgs ];
 
 			await runCommand( stylelintCmd, stylelintArgs, 'Stylelint (styles)' );
 
