@@ -8,18 +8,22 @@ import { fileURLToPath } from 'url';
 const command = process.argv[2];
 const args = process.argv.slice( 3 );
 
-const validCommands = [ 'build', 'dev', 'preview', 'lint', 'fix', 'test' ];
+const validCommands = [ 'build', 'dev', 'preview', 'lint', 'lint:scripts', 'lint:styles', 'fix', 'fix:scripts', 'fix:styles', 'test' ];
 
 if ( ! command || ! validCommands.includes( command ) ) {
 	console.log( 'Usage: pressbooks-build-tools <command>' );
 	console.log( '' );
 	console.log( 'Available commands:' );
-	console.log( '  build    - Build assets for production using Vite' );
-	console.log( '  dev      - Start Vite development server with hot reload' );
-	console.log( '  preview  - Preview production build locally' );
-	console.log( '  lint     - Run all linting tasks (scripts and styles)' );
-	console.log( '  fix      - Auto-fix ESLint issues in JavaScript files' );
-	console.log( '  test     - Run linting and build tasks' );
+	console.log( '  build        - Build assets for production using Vite' );
+	console.log( '  dev          - Start Vite development server with hot reload' );
+	console.log( '  preview      - Preview production build locally' );
+	console.log( '  lint         - Run all linting tasks (scripts and styles)' );
+	console.log( '  lint:scripts - Run ESLint on JavaScript files only' );
+	console.log( '  lint:styles  - Run Stylelint on CSS/SCSS files only' );
+	console.log( '  fix          - Auto-fix ESLint issues in JavaScript files' );
+	console.log( '  fix:scripts  - Auto-fix ESLint issues in JavaScript files' );
+	console.log( '  fix:styles   - Auto-fix Stylelint issues in CSS/SCSS files' );
+	console.log( '  test         - Run linting and build tasks' );
 	process.exit( 1 );
 }
 
@@ -78,7 +82,16 @@ async function main() {
 			console.log( 'Running linting tasks...' );
 			await runLintTasks( args );
 			return;
+		case 'lint:scripts':
+			console.log( 'Running script linting...' );
+			await runScriptLinting( args );
+			return;
+		case 'lint:styles':
+			console.log( 'Running style linting...' );
+			await runStyleLinting( args );
+			return;
 		case 'fix':
+		case 'fix:scripts':
 			execCommand = findExecutable( 'eslint' );
 			
 			// Parse file patterns from args, default to common JS patterns if none provided
@@ -100,6 +113,29 @@ async function main() {
 			execArgs = execCommand === 'npx' 
 				? [ 'eslint', '--fix', ...finalFixPatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...eslintOptions ] 
 				: [ '--fix', ...finalFixPatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...eslintOptions ];
+			break;
+		case 'fix:styles':
+			execCommand = findExecutable( 'stylelint' );
+			
+			// Parse style patterns from args, default to common style patterns if none provided
+			const styleFixPatterns = [];
+			const stylelintOptions = [];
+			
+			for ( const arg of args ) {
+				if ( arg.includes( '*.css' ) || arg.includes( '*.scss' ) || arg.includes( '*.sass' ) || arg.includes( '*.less' ) ) {
+					styleFixPatterns.push( arg );
+				} else {
+					stylelintOptions.push( arg );
+				}
+			}
+			
+			// Default patterns if no style patterns specified
+			const defaultStyleFixPatterns = [ '**/*.scss', '**/*.css' ];
+			const finalStyleFixPatterns = styleFixPatterns.length > 0 ? styleFixPatterns : defaultStyleFixPatterns;
+			
+			execArgs = execCommand === 'npx' 
+				? [ 'stylelint', '--fix', ...finalStyleFixPatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...stylelintOptions ] 
+				: [ '--fix', ...finalStyleFixPatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...stylelintOptions ];
 			break;
 		case 'test':
 			// For test, run lint then build
@@ -140,6 +176,94 @@ async function main() {
 		} );
 	}
 
+	// Function to run script linting only
+	async function runScriptLinting( args, exitOnComplete = true ) {
+		try {
+			// Parse arguments to get script patterns
+			const scriptPatterns = [];
+			const otherArgs = [];
+			
+			for ( let i = 0; i < args.length; i++ ) {
+				const arg = args[ i ];
+				if ( arg === '--scripts' && args[ i + 1 ] ) {
+					scriptPatterns.push( args[ i + 1 ] );
+					i++; // Skip next argument as it's the pattern
+				} else if ( arg.includes( '*.js' ) || arg.includes( '*.ts' ) || arg.includes( '*.jsx' ) || arg.includes( '*.tsx' ) ) {
+					scriptPatterns.push( arg );
+				} else {
+					otherArgs.push( arg );
+				}
+			}
+			
+			// Default patterns if none provided
+			const defaultScriptPatterns = [ 'config/*.js', 'assets/src/scripts/**/*.js' ];
+			const finalScriptPatterns = scriptPatterns.length > 0 ? scriptPatterns : defaultScriptPatterns;
+
+			// Lint scripts
+			const eslintCmd = findExecutable( 'eslint' );
+			const eslintArgs = eslintCmd === 'npx'
+				? [ 'eslint', ...finalScriptPatterns, '--ignore-pattern', 'bin/', '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...otherArgs ]
+				: [ ...finalScriptPatterns, '--ignore-pattern', 'bin/', '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...otherArgs ];
+
+			await runCommand( eslintCmd, eslintArgs, 'ESLint (scripts)' );
+
+			if ( exitOnComplete ) {
+				console.log( 'Script linting completed successfully!' );
+				process.exit( 0 );
+			}
+		} catch ( error ) {
+			console.error( 'Script linting failed:', error.message );
+			if ( exitOnComplete ) {
+				process.exit( 1 );
+			}
+			throw error;
+		}
+	}
+
+	// Function to run style linting only
+	async function runStyleLinting( args, exitOnComplete = true ) {
+		try {
+			// Parse arguments to get style patterns
+			const stylePatterns = [];
+			const otherArgs = [];
+			
+			for ( let i = 0; i < args.length; i++ ) {
+				const arg = args[ i ];
+				if ( arg === '--styles' && args[ i + 1 ] ) {
+					stylePatterns.push( args[ i + 1 ] );
+					i++; // Skip next argument as it's the pattern
+				} else if ( arg.includes( '*.scss' ) || arg.includes( '*.css' ) || arg.includes( '*.sass' ) || arg.includes( '*.less' ) ) {
+					stylePatterns.push( arg );
+				} else {
+					otherArgs.push( arg );
+				}
+			}
+			
+			// Default patterns if none provided
+			const defaultStylePatterns = [ '**/*.scss' ];
+			const finalStylePatterns = stylePatterns.length > 0 ? stylePatterns : defaultStylePatterns;
+
+			// Lint styles
+			const stylelintCmd = findExecutable( 'stylelint' );
+			const stylelintArgs = stylelintCmd === 'npx'
+				? [ 'stylelint', ...finalStylePatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...otherArgs ]
+				: [ ...finalStylePatterns, '--ignore-pattern', 'vendor/**', '--ignore-pattern', 'node_modules/**', ...otherArgs ];
+
+			await runCommand( stylelintCmd, stylelintArgs, 'Stylelint (styles)' );
+
+			if ( exitOnComplete ) {
+				console.log( 'Style linting completed successfully!' );
+				process.exit( 0 );
+			}
+		} catch ( error ) {
+			console.error( 'Style linting failed:', error.message );
+			if ( exitOnComplete ) {
+				process.exit( 1 );
+			}
+			throw error;
+		}
+	}
+
 	// Function to run lint tasks
 	/**
 	 *
@@ -148,46 +272,9 @@ async function main() {
 	 */
 	async function runLintTasks( args, exitOnComplete = true ) {
 		try {
-			// Parse arguments to separate script/style patterns from other options
-			const scriptPatterns = [];
-			const stylePatterns = [];
-			const otherArgs = [];
-
-			for ( let i = 0; i < args.length; i++ ) {
-				const arg = args[ i ];
-				if ( arg === '--scripts' && args[ i + 1 ] ) {
-					scriptPatterns.push( args[ i + 1 ] );
-					i++; // Skip next argument as it's the pattern
-				} else if ( arg === '--styles' && args[ i + 1 ] ) {
-					stylePatterns.push( args[ i + 1 ] );
-					i++; // Skip next argument as it's the pattern
-				} else {
-					otherArgs.push( arg );
-				}
-			}
-
-			// Default patterns if none provided
-			const defaultScriptPatterns = [ 'config/*.js', 'assets/src/scripts/**/*.js' ];
-			const defaultStylePatterns = [ '**/*.scss' ];
-
-			const finalScriptPatterns = scriptPatterns.length > 0 ? scriptPatterns : defaultScriptPatterns;
-			const finalStylePatterns = stylePatterns.length > 0 ? stylePatterns : defaultStylePatterns;
-
-			// Lint scripts
-			const eslintCmd = findExecutable( 'eslint' );
-			const eslintArgs = eslintCmd === 'npx'
-				? [ 'eslint', ...finalScriptPatterns, '--ignore-pattern', 'bin/', ...otherArgs ]
-				: [ ...finalScriptPatterns, '--ignore-pattern', 'bin/', ...otherArgs ];
-
-			await runCommand( eslintCmd, eslintArgs, 'ESLint (scripts)' );
-
-			// Lint styles
-			const stylelintCmd = findExecutable( 'stylelint' );
-			const stylelintArgs = stylelintCmd === 'npx'
-				? [ 'stylelint', ...finalStylePatterns, ...otherArgs ]
-				: [ ...finalStylePatterns, ...otherArgs ];
-
-			await runCommand( stylelintCmd, stylelintArgs, 'Stylelint (styles)' );
+			// Run both script and style linting (don't exit on complete for individual tasks)
+			await runScriptLinting( args, false );
+			await runStyleLinting( args, false );
 
 			if ( exitOnComplete ) {
 				console.log( 'All linting tasks completed successfully!' );
@@ -200,9 +287,7 @@ async function main() {
 			}
 			throw error;
 		}
-	}
-
-	// Function to run test tasks (lint + build)
+	}	// Function to run test tasks (lint + build)
 	/**
 	 *
 	 * @param args

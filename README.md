@@ -86,41 +86,89 @@ npm run test
 | `build` | Build assets for production | `pressbooks-build-tools build` |
 | `dev` | Start development server with hot reload | `pressbooks-build-tools dev` |
 | `preview` | Preview production build locally | `pressbooks-build-tools preview` |
-| `lint` | Run linting on JavaScript and SCSS files | `pressbooks-build-tools lint` |
+| `lint` | Run linting on both JavaScript and SCSS files | `pressbooks-build-tools lint` |
+| `lint:scripts` | Run linting on JavaScript files only | `pressbooks-build-tools lint:scripts` |
+| `lint:styles` | Run linting on CSS/SCSS files only | `pressbooks-build-tools lint:styles` |
 | `fix` | Auto-fix ESLint issues in JavaScript files | `pressbooks-build-tools fix` |
+| `fix:scripts` | Auto-fix ESLint issues in JavaScript files | `pressbooks-build-tools fix:scripts` |
+| `fix:styles` | Auto-fix Stylelint issues in CSS/SCSS files | `pressbooks-build-tools fix:styles` |
 | `test` | Run linting and build tasks | `pressbooks-build-tools test` |
 
-### Customizing Lint Directories
+### Customizing Lint and Fix Commands
 
-By default, the lint command scans:
+By default, the commands scan:
 - **Scripts:** `config/*.js`, `assets/src/scripts/**/*.js`
 - **Styles:** `**/*.scss`
+
+#### Separate Script and Style Commands
+
+You can now lint or fix scripts and styles independently:
+
+```bash
+# Lint only JavaScript files
+pressbooks-build-tools lint:scripts
+
+# Lint only CSS/SCSS files
+pressbooks-build-tools lint:styles
+
+# Fix only JavaScript files
+pressbooks-build-tools fix:scripts
+
+# Fix only CSS/SCSS files
+pressbooks-build-tools fix:styles
+```
+
+#### Custom File Patterns
 
 You can customize which directories to scan:
 
 ```bash
 # Lint custom script directories
-pressbooks-build-tools lint --scripts "src/**/*.js" --scripts "lib/**/*.js"
+pressbooks-build-tools lint:scripts "src/**/*.js" "lib/**/*.js"
 
 # Lint custom style directories  
-pressbooks-build-tools lint --styles "assets/css/**/*.scss" --styles "themes/**/*.scss"
+pressbooks-build-tools lint:styles "assets/css/**/*.scss" "themes/**/*.scss"
 
-# Combine custom patterns
-pressbooks-build-tools lint --scripts "src/**/*.js" --styles "assets/**/*.scss"
+# Fix custom script patterns
+pressbooks-build-tools fix:scripts "src/**/*.js" "admin/js/**/*.js"
+
+# Fix custom style patterns
+pressbooks-build-tools fix:styles "assets/src/styles/**/*.scss"
 
 # Add additional ESLint/Stylelint options
-pressbooks-build-tools lint --scripts "src/**/*.js" --fix --max-warnings 0
+pressbooks-build-tools lint:scripts "src/**/*.js" --max-warnings 0
+pressbooks-build-tools fix:styles "assets/**/*.scss" --cache
 ```
 
-You can also create custom scripts in your `package.json`:
+#### Legacy Combined Commands
+
+The original combined commands still work with custom patterns:
+
+```bash
+# Lint both scripts and styles with custom patterns
+pressbooks-build-tools lint --scripts "src/**/*.js" --styles "assets/**/*.scss"
+
+# Fix scripts with custom patterns (styles not affected)
+pressbooks-build-tools fix "src/**/*.js" "lib/**/*.js"
+```
+
+#### Package.json Scripts
+
+You can create granular scripts for different parts of your project:
 
 ```json
 {
   "scripts": {
     "lint": "pressbooks-build-tools lint",
-    "lint:theme": "pressbooks-build-tools lint --scripts 'theme/assets/**/*.js' --styles 'theme/assets/**/*.scss'",
-    "lint:admin": "pressbooks-build-tools lint --scripts 'admin/js/**/*.js' --styles 'admin/css/**/*.scss'",
-    "lint:custom": "pressbooks-build-tools lint --scripts 'src/**/*.js' --styles 'assets/**/*.scss'"
+    "lint:scripts": "pressbooks-build-tools lint:scripts",
+    "lint:styles": "pressbooks-build-tools lint:styles",
+    "fix": "pressbooks-build-tools fix:scripts",
+    "fix:scripts": "pressbooks-build-tools fix:scripts", 
+    "fix:styles": "pressbooks-build-tools fix:styles",
+    
+    "lint:theme": "pressbooks-build-tools lint:scripts 'theme/assets/**/*.js' && pressbooks-build-tools lint:styles 'theme/assets/**/*.scss'",
+    "lint:admin": "pressbooks-build-tools lint:scripts 'admin/js/**/*.js' && pressbooks-build-tools lint:styles 'admin/css/**/*.scss'",
+    "fix:theme": "pressbooks-build-tools fix:scripts 'theme/assets/**/*.js' && pressbooks-build-tools fix:styles 'theme/assets/**/*.scss'"
   }
 }
 ```
@@ -266,7 +314,11 @@ my-plugin/
     "build": "pressbooks-build-tools build",
     "dev": "pressbooks-build-tools dev",
     "lint": "pressbooks-build-tools lint",
-    "fix": "pressbooks-build-tools fix",
+    "lint:scripts": "pressbooks-build-tools lint:scripts",
+    "lint:styles": "pressbooks-build-tools lint:styles",
+    "fix": "pressbooks-build-tools fix:scripts",
+    "fix:scripts": "pressbooks-build-tools fix:scripts",
+    "fix:styles": "pressbooks-build-tools fix:styles",
     "test": "pressbooks-build-tools test"
   },
   "devDependencies": {
@@ -334,7 +386,10 @@ export default defineConfig({
 ```json
 {
   "scripts": {
-    "lint:theme": "pressbooks-build-tools lint --scripts 'assets/src/**/*.js' --styles 'assets/src/**/*.scss'"
+    "lint:theme-scripts": "pressbooks-build-tools lint:scripts 'assets/src/**/*.js'",
+    "lint:theme-styles": "pressbooks-build-tools lint:styles 'assets/src/**/*.scss'",
+    "lint:theme": "npm run lint:theme-scripts && npm run lint:theme-styles",
+    "fix:theme": "pressbooks-build-tools fix:scripts 'assets/src/**/*.js' && pressbooks-build-tools fix:styles 'assets/src/**/*.scss'"
   }
 }
 ```
