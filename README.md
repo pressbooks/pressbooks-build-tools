@@ -61,24 +61,6 @@ export default defineConfig({
 }
 ```
 
-4. **Use the commands:**
-```bash
-# Development with hot reload
-npm run dev
-
-# Build for production  
-npm run build
-
-# Lint code (both JavaScript and SCSS)
-npm run lint
-
-# Auto-fix linting issues
-npm run fix
-
-# Run tests (lint + build)
-npm run test
-```
-
 ### Available Commands
 
 | Command | Description | Example Usage |
@@ -89,7 +71,6 @@ npm run test
 | `lint` | Run linting on both JavaScript and SCSS files | `pressbooks-build-tools lint` |
 | `lint:scripts` | Run linting on JavaScript files only | `pressbooks-build-tools lint:scripts` |
 | `lint:styles` | Run linting on CSS/SCSS files only | `pressbooks-build-tools lint:styles` |
-| `fix` | Auto-fix ESLint issues in JavaScript files | `pressbooks-build-tools fix` |
 | `fix:scripts` | Auto-fix ESLint issues in JavaScript files | `pressbooks-build-tools fix:scripts` |
 | `fix:styles` | Auto-fix Stylelint issues in CSS/SCSS files | `pressbooks-build-tools fix:styles` |
 | `test` | Run linting and build tasks | `pressbooks-build-tools test` |
@@ -138,18 +119,6 @@ pressbooks-build-tools fix:styles "assets/src/styles/**/*.scss"
 # Add additional ESLint/Stylelint options
 pressbooks-build-tools lint:scripts "src/**/*.js" --max-warnings 0
 pressbooks-build-tools fix:styles "assets/**/*.scss" --cache
-```
-
-#### Legacy Combined Commands
-
-The original combined commands still work with custom patterns:
-
-```bash
-# Lint both scripts and styles with custom patterns
-pressbooks-build-tools lint --scripts "src/**/*.js" --styles "assets/**/*.scss"
-
-# Fix scripts with custom patterns (styles not affected)
-pressbooks-build-tools fix "src/**/*.js" "lib/**/*.js"
 ```
 
 #### Package.json Scripts
