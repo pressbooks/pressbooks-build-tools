@@ -279,11 +279,6 @@ module.exports = {
 }
 ```
 
-#### Why Different File Formats?
-
-- **ESLint config (`.cjs`)**: Uses CommonJS format because ESLint has specific requirements when working with ES modules projects
-- **Stylelint config (`.js`)**: Uses regular JavaScript format as Stylelint handles both module systems transparently
-
 ## Examples
 
 ### Basic Plugin Setup
@@ -444,37 +439,6 @@ export default defineConfig({
 });
 ```
 
-### Multiple Entry Points Example
-
-**For complex plugins with multiple components:**
-```javascript
-// vite.config.js
-export default defineConfig({
-  ...baseConfig,
-  build: {
-    ...baseConfig.build,
-    rollupOptions: {
-      input: {
-        // Frontend
-        'public': resolve(__dirname, 'assets/src/scripts/public.js'),
-        'public-styles': resolve(__dirname, 'assets/src/styles/public.scss'),
-        
-        // Admin
-        'admin': resolve(__dirname, 'assets/src/scripts/admin.js'),
-        'admin-styles': resolve(__dirname, 'assets/src/styles/admin.scss'),
-        
-        // Gutenberg blocks
-        'blocks': resolve(__dirname, 'assets/src/scripts/blocks.js'),
-        'blocks-styles': resolve(__dirname, 'assets/src/styles/blocks.scss'),
-        
-        // Vendor libraries
-        'vendor': resolve(__dirname, 'assets/src/scripts/vendor.js'),
-      },
-    },
-  },
-});
-```
-
 ## Migration from Laravel Mix
 
 If you're upgrading from a previous version that used Laravel Mix:
@@ -503,7 +467,7 @@ your-plugin/
 
 ## Development
 
-This repo includes test assets to verify that `.js` and `.scss` files compile and linters run. To test your changes:
+This repo includes test assets to verify that `.js` and `.css/.scss` files compile and linters run. To test your changes:
 
 ```
 npm install
