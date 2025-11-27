@@ -4,7 +4,7 @@
 
 NPM package which includes all asset linting and build tools for Pressbooks projects.
 
-## How To install
+## Installation
 
 ```bash
 npm i -D pressbooks-build-tools
@@ -12,52 +12,431 @@ npm i -D pressbooks-build-tools
 
 ## Usage
 
-### Laravel Mix
+### Quick Start
 
-Pressbooks Build Tools includes [Laravel Mix](https://laravel-mix.com/), which can be configured and used according to the
-project's [documentation](https://laravel-mix.com/docs/6.0/installation#step-2-create-a-mix-configuration-file).
+1. **Install the package:**
+```bash
+npm i -D pressbooks-build-tools
+```
 
-### ESLint
-
-Pressbooks Build Tools includes [ESLint](https://eslint.org). Pressbooks' ESLint configuration can be used in your
-project by adding the following to your ESLint configuration:
-
+2. **Create a `vite.config.js` in your project root:**
 ```javascript
-"eslintConfig": {
-    "extends": "./node_modules/pressbooks-build-tools/config/eslint.js"
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+
+// Import the WordPress-optimized Vite config
+import baseConfig from 'pressbooks-build-tools/vite-wp';
+
+export default defineConfig({
+  ...baseConfig,
+  build: {
+    ...baseConfig.build,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'assets/src/scripts/main.js'),
+        styles: resolve(__dirname, 'assets/src/styles/main.scss'),
+      },
+    },
+  },
+});
+```
+
+3. **Add scripts to your `package.json`:**
+```json
+{
+  "scripts": {
+    "build": "pressbooks-build-tools build",
+    "dev": "pressbooks-build-tools dev",
+    "preview": "pressbooks-build-tools preview",
+    "lint": "pressbooks-build-tools lint",
+    "fix": "pressbooks-build-tools fix",
+    "test": "pressbooks-build-tools test"
+  },
+  "eslintConfig": {
+    "extends": "pressbooks-build-tools/eslint"
+  },
+  "stylelint": {
+    "extends": "pressbooks-build-tools/stylelint"
+  }
 }
 ```
 
-### Stylelint
+### Available Commands
 
-Pressbooks Build Tools includes [Stylelint](http://stylelint.io). Pressbooks' Stylelint configuration can be used in your
-project by adding the following to your `package.json` file:
+| Command | Description | Example Usage |
+|---------|-------------|---------------|
+| `build` | Build assets for production | `pressbooks-build-tools build` |
+| `dev` | Start development server with hot reload | `pressbooks-build-tools dev` |
+| `preview` | Preview production build locally | `pressbooks-build-tools preview` |
+| `lint` | Run linting on both JavaScript and SCSS files | `pressbooks-build-tools lint` |
+| `lint:scripts` | Run linting on JavaScript files only | `pressbooks-build-tools lint:scripts` |
+| `lint:styles` | Run linting on CSS/SCSS files only | `pressbooks-build-tools lint:styles` |
+| `fix:scripts` | Auto-fix ESLint issues in JavaScript files | `pressbooks-build-tools fix:scripts` |
+| `fix:styles` | Auto-fix Stylelint issues in CSS/SCSS files | `pressbooks-build-tools fix:styles` |
+| `test` | Run linting and build tasks | `pressbooks-build-tools test` |
 
-```javascript
-"stylelint": {
-    "extends": "./node_modules/pressbooks-build-tools/config/stylelint.js"
+### Customizing Lint and Fix Commands
+
+By default, the commands scan:
+- **Scripts:** `config/*.js`, `assets/src/scripts/**/*.js`
+- **Styles:** `**/*.scss`
+
+#### Separate Script and Style Commands
+
+You can now lint or fix scripts and styles independently:
+
+```bash
+# Lint only JavaScript files
+pressbooks-build-tools lint:scripts
+
+# Lint only CSS/SCSS files
+pressbooks-build-tools lint:styles
+
+# Fix only JavaScript files
+pressbooks-build-tools fix:scripts
+
+# Fix only CSS/SCSS files
+pressbooks-build-tools fix:styles
+```
+
+#### Custom File Patterns
+
+You can customize which directories to scan:
+
+```bash
+# Lint custom script directories
+pressbooks-build-tools lint:scripts "src/**/*.js" "lib/**/*.js"
+
+# Lint custom style directories  
+pressbooks-build-tools lint:styles "assets/css/**/*.scss" "themes/**/*.scss"
+
+# Fix custom script patterns
+pressbooks-build-tools fix:scripts "src/**/*.js" "admin/js/**/*.js"
+
+# Fix custom style patterns
+pressbooks-build-tools fix:styles "assets/src/styles/**/*.scss"
+
+# Add additional ESLint/Stylelint options
+pressbooks-build-tools lint:scripts "src/**/*.js" --max-warnings 0
+pressbooks-build-tools fix:styles "assets/**/*.scss" --cache
+```
+
+#### Package.json Scripts
+
+You can create granular scripts for different parts of your project:
+
+```json
+{
+  "scripts": {
+    "lint": "pressbooks-build-tools lint",
+    "lint:scripts": "pressbooks-build-tools lint:scripts",
+    "lint:styles": "pressbooks-build-tools lint:styles",
+    "fix": "pressbooks-build-tools fix:scripts",
+    "fix:scripts": "pressbooks-build-tools fix:scripts", 
+    "fix:styles": "pressbooks-build-tools fix:styles",
+    
+    "lint:theme": "pressbooks-build-tools lint:scripts 'theme/assets/**/*.js' && pressbooks-build-tools lint:styles 'theme/assets/**/*.scss'",
+    "lint:admin": "pressbooks-build-tools lint:scripts 'admin/js/**/*.js' && pressbooks-build-tools lint:styles 'admin/css/**/*.scss'",
+    "fix:theme": "pressbooks-build-tools fix:scripts 'theme/assets/**/*.js' && pressbooks-build-tools fix:styles 'theme/assets/**/*.scss'"
+  }
 }
 ```
 
-## Upgrading to 3.0
+#### Configuration Options
 
-Version 3.0 of `pressbooks-build-tools` includes Laravel Mix 6.0, and as such will require some [changes to build scripts](https://laravel-mix.com/docs/6.0/upgrade#update-your-npm-scripts) wherever it is used. For example, the build task used in testing this package used to require the following script:
+The `createViteConfig` function accepts these options:
 
-```shell
-cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js
+- `input` - Entry points for your assets (required)
+- `outDir` - Output directory (default: `'assets/dist'`)
+- `port` - Development server port (default: `3100`)
+- `host` - Development server host (default: `'localhost'`)
+- `proxy` - Development server proxy configuration
+- `copyTargets` - Array of files/directories to copy during build (see below)
+- `plugins` - Additional Vite plugins to include
+- `config` - Additional Vite configuration to merge
+
+#### File Copying with copyTargets
+
+For copying static files (equivalent to Laravel Mix's `.copy()` and `.copyDirectory()`):
+
+```javascript
+export default createViteConfig({
+  // ... other options ...
+  copyTargets: [
+    // Copy individual files
+    { 
+      src: 'node_modules/some-lib/dist/file.js', 
+      dest: 'scripts', 
+      rename: 'new-name.js' 
+    },
+    // Copy directories
+    { 
+      src: 'assets/src/images/*', 
+      dest: 'images' 
+    },
+    // Copy with glob patterns
+    { 
+      src: 'node_modules/@vendor/package/dist/**/*', 
+      dest: 'vendor/package' 
+    }
+  ]
+})
 ```
 
-The same build task can now be run using a new `mix` executable with an appropriate flag:
+#### Migrating .scripts() Concatenation
 
-```shell
-mix --production
+Laravel Mix's `.scripts()` method concatenated multiple files. In Vite, create wrapper files instead:
+
+```javascript
+// assets/src/scripts/vendor/jquery-plugins.js
+import 'jquery-ui/dist/jquery-ui.min.js';
+import 'jquery-validation/dist/jquery.validate.min.js';
+import 'select2/dist/js/select2.min.js';
+
+// Then add to your vite.config.js:
+input: {
+  'jquery-plugins': resolve(__dirname, 'assets/src/scripts/vendor/jquery-plugins.js')
+}
 ```
 
-For the full list of scripts and their replacements, see the [Laravel Mix documentation](https://laravel-mix.com/docs/6.0/upgrade#update-your-npm-scripts).
+### Linting Configuration
 
-## Test Your Changes
+#### ESLint (JavaScript/TypeScript)
 
-This repo includes a boilerplate `webpack.mix.js` configuration used to test that, at the very least, `.js` and `.scss` files compile and that linters run. To run the test do:
+Pressbooks Build Tools includes [ESLint](https://eslint.org) with a comprehensive configuration. The ESLint config is provided as a `.cjs` file (CommonJS format) because ESLint requires CommonJS when used in ES modules projects.
+
+Add to your `package.json`:
+```json
+{
+  "eslintConfig": {
+    "extends": "pressbooks-build-tools/eslint"
+  }
+}
+```
+
+Or create a separate `.eslintrc.cjs` file:
+```javascript
+module.exports = {
+  extends: ['pressbooks-build-tools/eslint'],
+  // Add your custom rules here
+  rules: {
+    // Override or add rules as needed
+  }
+}
+```
+
+#### Stylelint (CSS/SCSS)
+
+Pressbooks Build Tools includes [Stylelint](http://stylelint.io) for CSS and SCSS linting. The Stylelint config is a regular `.js` file since Stylelint handles both CommonJS and ES modules seamlessly.
+
+Add to your `package.json`:
+```json
+{
+  "stylelint": {
+    "extends": "pressbooks-build-tools/stylelint"
+  }
+}
+```
+
+Or create a separate `.stylelintrc.js` file:
+```javascript
+module.exports = {
+  extends: ['pressbooks-build-tools/stylelint'],
+  rules: {
+    // Add your custom rules here
+  }
+}
+```
+
+## Examples
+
+### Basic Plugin Setup
+
+Here's a complete example for a WordPress plugin:
+
+**Directory structure:**
+```
+my-plugin/
+├── assets/
+│   ├── src/
+│   │   ├── scripts/
+│   │   │   ├── main.js
+│   │   │   └── admin.js
+│   │   └── styles/
+│   │       ├── main.scss
+│   │       └── admin.scss
+│   └── dist/           # Generated by build
+├── vite.config.js
+└── package.json
+```
+
+**package.json:**
+```json
+{
+  "name": "my-plugin",
+  "scripts": {
+    "build": "pressbooks-build-tools build",
+    "dev": "pressbooks-build-tools dev",
+    "lint": "pressbooks-build-tools lint",
+    "lint:scripts": "pressbooks-build-tools lint:scripts",
+    "lint:styles": "pressbooks-build-tools lint:styles",
+    "fix": "pressbooks-build-tools fix:scripts",
+    "fix:scripts": "pressbooks-build-tools fix:scripts",
+    "fix:styles": "pressbooks-build-tools fix:styles",
+    "test": "pressbooks-build-tools test"
+  },
+  "devDependencies": {
+    "pressbooks-build-tools": "^5.0.0"
+  },
+  "eslintConfig": {
+    "extends": "pressbooks-build-tools/eslint"
+  },
+  "stylelint": {
+    "extends": "pressbooks-build-tools/stylelint"
+  }
+}
+```
+
+**vite.config.js:**
+```javascript
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+import baseConfig from 'pressbooks-build-tools/vite-wp';
+
+export default defineConfig({
+  ...baseConfig,
+  build: {
+    ...baseConfig.build,
+    rollupOptions: {
+      input: {
+        'my-plugin': resolve(__dirname, 'assets/src/scripts/main.js'),
+        'my-plugin-admin': resolve(__dirname, 'assets/src/scripts/admin.js'),
+        'my-plugin-styles': resolve(__dirname, 'assets/src/styles/main.scss'),
+        'my-plugin-admin-styles': resolve(__dirname, 'assets/src/styles/admin.scss'),
+      },
+    },
+  },
+});
+```
+
+### Theme Setup
+
+**vite.config.js for a theme:**
+```javascript
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+import baseConfig from 'pressbooks-build-tools/vite-wp';
+
+export default defineConfig({
+  ...baseConfig,
+  build: {
+    ...baseConfig.build,
+    rollupOptions: {
+      input: {
+        'theme': resolve(__dirname, 'assets/src/scripts/theme.js'),
+        'theme-styles': resolve(__dirname, 'assets/src/styles/style.scss'),
+        'editor-styles': resolve(__dirname, 'assets/src/styles/editor.scss'),
+      },
+    },
+  },
+  server: {
+    ...baseConfig.server,
+    port: 3200, // Custom port for this theme
+  },
+});
+```
+
+**Custom lint patterns for theme:**
+```json
+{
+  "scripts": {
+    "lint:theme-scripts": "pressbooks-build-tools lint:scripts 'assets/src/**/*.js'",
+    "lint:theme-styles": "pressbooks-build-tools lint:styles 'assets/src/**/*.scss'",
+    "lint:theme": "npm run lint:theme-scripts && npm run lint:theme-styles",
+    "fix:theme": "pressbooks-build-tools fix:scripts 'assets/src/**/*.js' && pressbooks-build-tools fix:styles 'assets/src/**/*.scss'"
+  }
+}
+```
+
+### Advanced Configuration
+
+**vite.config.js with custom plugins and copying:**
+```javascript
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+import baseConfig from 'pressbooks-build-tools/vite-wp';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+export default defineConfig({
+  ...baseConfig,
+  plugins: [
+    ...baseConfig.plugins,
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'node_modules/some-lib/dist/*',
+          dest: 'vendor/some-lib'
+        },
+        {
+          src: 'assets/src/images/*',
+          dest: 'images'
+        }
+      ]
+    })
+  ],
+  build: {
+    ...baseConfig.build,
+    rollupOptions: {
+      input: {
+        'app': resolve(__dirname, 'assets/src/scripts/app.js'),
+        'vendor': resolve(__dirname, 'assets/src/scripts/vendor.js'),
+        'app-styles': resolve(__dirname, 'assets/src/styles/app.scss'),
+      },
+    },
+  },
+  server: {
+    ...baseConfig.server,
+    port: 3300,
+    proxy: {
+      '/wp-admin': {
+        target: 'https://my-local-site.test',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
+});
+```
+
+## Migration from Laravel Mix
+
+If you're upgrading from a previous version that used Laravel Mix:
+
+1. **Remove old files**: Delete `webpack.mix.js` from your project
+2. **Update package.json**: Replace Mix scripts with Vite scripts (see above)
+3. **Create vite.config.js**: Use the new configuration format
+4. **Update asset paths**: Vite uses different output paths than Mix
+
+### Asset Structure
+
+Your project should have this structure:
+
+```
+your-plugin/
+├── assets/
+│   ├── src/
+│   │   ├── scripts/
+│   │   │   └── main.js
+│   │   └── styles/
+│   │       └── main.scss
+│   └── dist/           # Generated by build
+├── vite.config.js      # New config file
+└── package.json        # Updated scripts
+```
+
+## Development
+
+This repo includes test assets to verify that `.js` and `.css/.scss` files compile and linters run. To test your changes:
 
 ```
 npm install

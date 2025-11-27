@@ -1,6 +1,6 @@
 {
   "name": "pressbooks-build-tools",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "NPM package which includes all asset linting and build tools for Pressbooks projects.",
   "homepage": "https://github.com/pressbooks/pressbooks-build-tools#readme",
   "bugs": {
@@ -16,54 +16,71 @@
     "email": "code@pressbooks.com",
     "url": "https://pressbooks.org/"
   },
+  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./vite": "./config/vite.config.base.js",
+    "./vite-wp": "./config/vite.config.wp.js",
+    "./eslint": "./config/eslint.cjs",
+    "./stylelint": "./config/stylelint.js"
+  },
+  "bin": {
+    "pressbooks-build-tools": "./bin/cli.js"
+  },
   "scripts": {
-    "build": "mix --production",
-    "fix": "eslint --fix **/*.js",
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview",
+    "fix": "eslint --fix config/ assets/src/scripts/ index.js",
     "lint": "run-s lint:*",
-    "lint:scripts": "eslint config/*.js assets/src/scripts/*.js",
-    "lint:styles": "stylelint **/*.scss",
+    "lint:scripts": "eslint config/ assets/src/scripts/ index.js",
+    "lint:styles": "stylelint assets/src/styles/",
     "test": "run-s lint:* build",
     "prepare": "husky install"
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "eslintConfig": {
-    "extends": "./config/eslint.js"
+    "extends": "./config/eslint.cjs"
   },
   "stylelint": {
     "extends": "./config/stylelint.js"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 22"
   },
   "dependencies": {
+    "@kucrut/vite-for-wp": "^0.12.0",
+    "@vitejs/plugin-legacy": "^7.2.1",
+    "autoprefixer": "^10.4.20",
     "babel-eslint": "^10.1.0",
-    "browser-sync": "^2.27.1",
-    "browser-sync-webpack-plugin": "^2.3.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.22.0",
+    "eslint": "^8.57.1",
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsdoc": "^46.4.3",
     "eslint-plugin-sort-destructure-keys": "^1.4.0",
-    "laravel-mix": "^6.0.25",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.3.5",
     "prettier-stylelint": "^0.4.2",
-    "resolve-url-loader": "^5.0.0",
-    "sass": "^1.35.1",
-    "sass-loader": "^13.0.2",
+    "sass": "^1.92.1",
     "stylelint": "^14.10.0",
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-recommended": "^9.0.0",
-    "stylelint-config-standard-scss": "^6.0.0"
+    "stylelint-config-standard-scss": "^6.0.0",
+    "vite": "^7.1.5",
+    "vite-plugin-live-reload": "^3.0.5",
+    "vite-plugin-static-copy": "^3.1.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
     "husky": "^8.0.1",
-    "lint-staged": "^14.0.1",
-    "npm-run-all": "^4.1.5"
+    "lint-staged": "^14.0.1"
   },
   "lint-staged": {
     "*.js": "eslint --fix",
