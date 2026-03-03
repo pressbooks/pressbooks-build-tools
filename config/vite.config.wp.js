@@ -1,4 +1,5 @@
 import { v4wp } from '@kucrut/vite-for-wp';
+import basicSsl from '@vitejs/plugin-basic-ssl';
 import autoprefixer from 'autoprefixer';
 import { defineConfig } from 'vite';
 import liveReload from 'vite-plugin-live-reload';
@@ -17,10 +18,12 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
  * @param {boolean} [options.useTailwind] - Whether to include Tailwind CSS
  * @param {Array} [options.postcssPlugins] - Additional PostCSS plugins
  * @param {Array} [options.plugins] - Additional Vite plugins to include
+ * @param {boolean} [options.https] - Whether to enable HTTPS with basic SSL (defaults to true)
  * @param {object} [options.config] - Additional Vite configuration to merge
  * @returns {object} Vite configuration object
  */
 export function createWpViteConfig( options = {} ) {
+	const useHttps = options.https !== false;
 	const postcssPlugins = [ autoprefixer ];
 
 	// Add Tailwind if requested
@@ -50,6 +53,11 @@ export function createWpViteConfig( options = {} ) {
 		} ),
 	];
 
+	// Add basic SSL plugin for HTTPS development
+	if ( useHttps ) {
+		plugins.push( basicSsl() );
+	}
+
 	// Add any additional plugins
 	if ( options.plugins ) {
 		plugins.push( ...options.plugins );
@@ -63,6 +71,8 @@ export function createWpViteConfig( options = {} ) {
 			},
 		},
 		server: {
+			https: useHttps,
+			cors: true,
 			proxy: options.proxy || {
 				// Default proxy for WordPress development
 				'/wp-admin': {
