@@ -1,5 +1,6 @@
 import path from 'path';
 
+import basicSsl from '@vitejs/plugin-basic-ssl';
 import legacy from '@vitejs/plugin-legacy';
 import { defineConfig } from 'vite';
 import liveReload from 'vite-plugin-live-reload';
@@ -15,10 +16,12 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
  * @param {object} [options.proxy] - Development server proxy configuration
  * @param {Array} [options.copyTargets] - Array of files/directories to copy during build
  * @param {Array} [options.plugins] - Additional Vite plugins to include
+ * @param {boolean} [options.https] - Whether to enable HTTPS with basic SSL (defaults to true)
  * @param {object} [options.config] - Additional Vite configuration to merge
  * @returns {object} Vite configuration object
  */
 export function createViteConfig( options = {} ) {
+	const useHttps = options.https !== false;
 	const plugins = [
 		legacy( {
 			targets: [ 'defaults', 'not IE 11' ],
@@ -34,6 +37,11 @@ export function createViteConfig( options = {} ) {
 		plugins.push( viteStaticCopy( {
 			targets: options.copyTargets,
 		} ) );
+	}
+
+	// Add basic SSL plugin for HTTPS development
+	if ( useHttps ) {
+		plugins.push( basicSsl() );
 	}
 
 	// Add any additional plugins
@@ -94,6 +102,8 @@ export function createViteConfig( options = {} ) {
 			},
 		},
 		server: {
+			https: useHttps,
+			cors: true,
 			proxy: options.proxy || {
 				// Default proxy for WordPress development
 				'/wp-admin': {
