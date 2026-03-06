@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/pressbooks/pressbooks-build-tools/compare/5.0.0...5.1.0) (2026-03-06)
+
+
+### Features
+
+* basic ssl integration ([#347](https://github.com/pressbooks/pressbooks-build-tools/issues/347)) ([0ef1851](https://github.com/pressbooks/pressbooks-build-tools/commit/0ef1851ddec394018ff55be02fba5e5cecbace0a))
+
 ## [4.0.0](https://github.com/pressbooks/pressbooks-build-tools/compare/3.0.1...v4.0.0) (2022-08-20)
 
 
