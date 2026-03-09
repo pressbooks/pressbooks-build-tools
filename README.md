@@ -142,6 +142,40 @@ You can create granular scripts for different parts of your project:
 }
 ```
 
+### HTTPS & SSL Certificates
+
+The dev server runs over HTTPS by default. To get **trusted certificates** (no browser warnings), the build tools use [mkcert](https://github.com/FiloSottile/mkcert) to generate locally-trusted SSL certificates automatically.
+
+#### One-time setup
+
+```bash
+brew install mkcert   # macOS (or: apt install mkcert on Linux)
+mkcert -install
+```
+
+That's it. The next time you run `pressbooks-build-tools dev`, trusted certificates for `localhost` will be generated and cached automatically. You only need to run the commands above once per machine.
+
+#### How it works
+
+- If **mkcert is installed**, the build tools generate trusted certificates for `localhost`, `127.0.0.1`, and `::1`, cached in `~/.local/share/pressbooks-build-tools/certs/` (regenerated every 30 days).
+- If **mkcert is not installed**, the dev server falls back to a self-signed certificate. This works fine for local development (`https://pressbooks.test`) but will cause `ERR_CERT_AUTHORITY_INVALID` errors if you use tunneling services.
+- If setup is missing, a warning with instructions is printed when the dev server starts.
+
+#### Using tunneling services (ngrok, Cloudflare Tunnel, etc.)
+
+Trusted certificates via mkcert are **required** when accessing your local dev environment through a tunnel. Without them, browsers will block cross-origin requests from the tunnel origin to `localhost:3100`.
+
+The dev server also includes support for Chrome's [Private Network Access](https://developer.chrome.com/blog/private-network-access-preflight/) spec, which requires servers to explicitly allow requests from public origins to local network addresses.
+
+To disable HTTPS entirely, pass `https: false` in your config:
+
+```javascript
+export default createWpViteConfig({
+  https: false,
+  // ...
+});
+```
+
 #### Configuration Options
 
 The `createViteConfig` function accepts these options:
@@ -153,6 +187,7 @@ The `createViteConfig` function accepts these options:
 - `proxy` - Development server proxy configuration
 - `copyTargets` - Array of files/directories to copy during build (see below)
 - `plugins` - Additional Vite plugins to include
+- `https` - Whether to enable HTTPS (default: `true`)
 - `config` - Additional Vite configuration to merge
 
 #### File Copying with copyTargets
