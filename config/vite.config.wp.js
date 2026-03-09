@@ -1,9 +1,10 @@
 import { v4wp } from '@kucrut/vite-for-wp';
-import basicSsl from '@vitejs/plugin-basic-ssl';
 import autoprefixer from 'autoprefixer';
 import { defineConfig } from 'vite';
 import liveReload from 'vite-plugin-live-reload';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+import { getHttpsConfig, privateNetworkAccessPlugin } from './ssl.js';
 
 /**
  * Creates a WordPress-specific Vite configuration using @kucrut/vite-for-wp
@@ -51,12 +52,8 @@ export function createWpViteConfig( options = {} ) {
 		viteStaticCopy( {
 			targets: options.copyTargets || [],
 		} ),
+		privateNetworkAccessPlugin(),
 	];
-
-	// Add basic SSL plugin for HTTPS development
-	if ( useHttps ) {
-		plugins.push( basicSsl() );
-	}
 
 	// Add any additional plugins
 	if ( options.plugins ) {
@@ -71,8 +68,8 @@ export function createWpViteConfig( options = {} ) {
 			},
 		},
 		server: {
-			https: useHttps,
-			cors: true,
+			https: useHttps ? getHttpsConfig() : false,
+			cors: false, // Handled by privateNetworkAccessPlugin for PNA support
 			proxy: options.proxy || {
 				// Default proxy for WordPress development
 				'/wp-admin': {

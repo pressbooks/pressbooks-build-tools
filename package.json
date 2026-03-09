@@ -55,7 +55,6 @@
   },
   "dependencies": {
     "@kucrut/vite-for-wp": "^0.12.0",
-    "@vitejs/plugin-basic-ssl": "^2.1.4",
     "@vitejs/plugin-legacy": "^7.2.1",
     "autoprefixer": "^10.4.20",
     "babel-eslint": "^10.1.0",

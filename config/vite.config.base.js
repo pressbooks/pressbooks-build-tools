@@ -1,10 +1,11 @@
 import path from 'path';
 
-import basicSsl from '@vitejs/plugin-basic-ssl';
 import legacy from '@vitejs/plugin-legacy';
 import { defineConfig } from 'vite';
 import liveReload from 'vite-plugin-live-reload';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+import { getHttpsConfig, privateNetworkAccessPlugin } from './ssl.js';
 
 /**
  * Creates a Vite configuration with Pressbooks-specific defaults
@@ -30,6 +31,7 @@ export function createViteConfig( options = {} ) {
 			'**/*.php',
 			'templates/**/*.php',
 		] ),
+		privateNetworkAccessPlugin(),
 	];
 
 	// Add static copy plugin if copyTargets are provided
@@ -37,11 +39,6 @@ export function createViteConfig( options = {} ) {
 		plugins.push( viteStaticCopy( {
 			targets: options.copyTargets,
 		} ) );
-	}
-
-	// Add basic SSL plugin for HTTPS development
-	if ( useHttps ) {
-		plugins.push( basicSsl() );
 	}
 
 	// Add any additional plugins
@@ -102,8 +99,8 @@ export function createViteConfig( options = {} ) {
 			},
 		},
 		server: {
-			https: useHttps,
-			cors: true,
+			https: useHttps ? getHttpsConfig() : false,
+			cors: false, // Handled by privateNetworkAccessPlugin for PNA support
 			proxy: options.proxy || {
 				// Default proxy for WordPress development
 				'/wp-admin': {
